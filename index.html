@@ -8,6 +8,9 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Анимации и уведомления -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 <body>
     <header>
@@ -47,7 +50,7 @@
 
     <!-- Модальное окно оформления заказа -->
     <div id="formModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content animate__animated animate__fadeInDown">
             <span class="close" onclick="closeFormModal()">&times;</span>
             <h2>Оформить заказ</h2>
             <form id="newOrderForm">
@@ -72,6 +75,10 @@
                     <input type="text" id="company" required>
                 </div>
                 <div class="form-group">
+                    <label for="deposit">Итог залог:</label>
+                    <input type="number" id="deposit" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
                     <label for="note">Примечание:</label>
                     <textarea id="note" rows="3"></textarea>
                 </div>
@@ -86,7 +93,7 @@
 
     <!-- Модальное окно для информации о заказе -->
     <div id="orderInfoModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content animate__animated animate__fadeInUp">
             <span class="close" onclick="closeOrderInfoModal()">&times;</span>
             <h2>Детали заказа</h2>
             <div class="order-info">
@@ -95,12 +102,17 @@
                 <strong>Размер:</strong> <span id="orderInfoSize"></span>
                 <strong>Количество:</strong> <span id="orderInfoQuantity"></span>
                 <strong>Компания:</strong> <span id="orderInfoCompany"></span>
+                <strong>Итог залог:</strong> <span id="orderInfoDeposit"></span>
                 <strong>Примечание:</strong> <span id="orderInfoNote"></span>
                 <strong>Срок выполнения:</strong> <span id="orderInfoDeadline"></span>
+                <strong>Статус:</strong> <span id="orderInfoStatus"></span>
             </div>
         </div>
     </div>
 
+    <!-- Библиотеки для уведомлений -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Основной скрипт -->
     <script src="script.js"></script>
 </body>
 </html>
