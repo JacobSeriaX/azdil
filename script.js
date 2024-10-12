@@ -13,6 +13,28 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// Многошаговая форма: текущий шаг
+let currentStep = 1;
+const totalSteps = 4;
+
+// Функция для перехода на следующий шаг формы
+function nextStep() {
+    const nextStep = currentStep + 1;
+    if (nextStep > totalSteps) return;
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    document.getElementById(`step-${nextStep}`).classList.add('active');
+    currentStep = nextStep;
+}
+
+// Функция для перехода на предыдущий шаг формы
+function prevStep() {
+    const prevStep = currentStep - 1;
+    if (prevStep < 1) return;
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    document.getElementById(`step-${prevStep}`).classList.add('active');
+    currentStep = prevStep;
+}
+
 // Функция для обработки отправки формы нового заказа
 document.getElementById('newOrderForm').onsubmit = function(event) {
     event.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
@@ -46,6 +68,10 @@ document.getElementById('newOrderForm').onsubmit = function(event) {
             alert("Заказ успешно добавлен!");
             closeFormModal();
             document.getElementById('newOrderForm').reset(); // Очистка формы
+            // Сброс до первого шага
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            currentStep = 1;
+            document.getElementById(`step-1`).classList.add('active');
         })
         .catch(error => {
             console.error("Ошибка при добавлении заказа:", error);
@@ -92,12 +118,12 @@ function renderOrders(snapshot) {
         const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Количество оставшихся дней
 
         // Применение классов в зависимости от оставшегося времени до дедлайна
-        if (daysLeft <= 5 && daysLeft > 2) {
-            orderDiv.classList.add('blink-yellow'); // Мигает желтым, если осталось менее 5 дней
-        } else if (daysLeft <= 2 && daysLeft > 0) {
-            orderDiv.classList.add('blink-red'); // Мигает красным, если осталось менее 2 дней
-        } else if (daysLeft <= 0) {
-            orderDiv.classList.add('blink-maroon'); // Мигает темно-красным, если срок истек
+        if (daysLeft <= 5) {
+            orderDiv.classList.add('blink-maroon'); // Мигает бордовым, если осталось 5 дней и меньше
+        } else if (daysLeft <= 10) {
+            orderDiv.classList.add('blink-red'); // Мигает красным, если осталось 10 дней и меньше
+        } else if (daysLeft <= 15) {
+            orderDiv.classList.add('blink-yellow'); // Мигает желтым, если осталось 15 дней и меньше
         }
 
         // Добавление анимации при появлении заказа
@@ -135,6 +161,9 @@ function showOrderInfo(order) {
     document.getElementById('orderInfoDeadline').innerText = new Date(order.deadline).toLocaleDateString();
     document.getElementById('orderInfoStatus').innerText = order.status === 'waiting' ? 'Ожидание' : 'Готово';
     document.getElementById('orderInfoStatus').className = `order-status ${order.status === 'waiting' ? 'status-waiting' : 'status-completed'}`;
+
+    // Сброс слайдера информации
+    resetInfoSlider();
 }
 
 // Функция для закрытия модального окна информации о заказе
@@ -171,11 +200,19 @@ function updateOrderStatus(orderKey, newStatus) {
 // Функция для закрытия модального окна оформления заказа
 function closeFormModal() {
     document.getElementById('formModal').style.display = 'none';
+    // Сброс до первого шага
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep = 1;
+    document.getElementById(`step-1`).classList.add('active');
 }
 
 // Функция для открытия модального окна оформления заказа
 function openOrderForm() {
     document.getElementById('formModal').style.display = 'flex';
+    // Сброс до первого шага
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep = 1;
+    document.getElementById(`step-1`).classList.add('active');
 }
 
 // Слушатель для изменений в базе данных
@@ -254,3 +291,34 @@ function sortOrders() {
 database.ref('orders').orderByChild('sortOrder').on('value', (snapshot) => {
     renderOrders(snapshot);
 });
+
+/* Слайдер информации о заказе */
+
+// Текущий слайд
+let currentSlide = 0;
+
+// Функция для перехода к следующему слайду
+function nextSlide() {
+    const slides = document.querySelectorAll('.info-slider .slide');
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+}
+
+// Функция для перехода к предыдущему слайду
+function prevSlide() {
+    const slides = document.querySelectorAll('.info-slider .slide');
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+}
+
+// Функция для сброса слайдера информации (при открытии нового заказа)
+function resetInfoSlider() {
+    const slides = document.querySelectorAll('.info-slider .slide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    if (slides.length > 0) {
+        slides[0].classList.add('active');
+        currentSlide = 0;
+    }
+}

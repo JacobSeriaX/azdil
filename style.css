@@ -194,18 +194,18 @@ h1 {
 }
 
 @keyframes blink-yellow {
-    0%, 100% { background-color: #f6e05e; color: #000; }
-    50% { background-color: #fff; color: #000; }
+    0%, 100% { background-color: #fffacd; color: #000; }
+    50% { background-color: #ffff00; color: #000; }
 }
 
 @keyframes blink-red {
-    0%, 100% { background-color: #f56565; color: #fff; }
-    50% { background-color: #fff; color: #000; }
+    0%, 100% { background-color: #ffcccc; color: #000; }
+    50% { background-color: #ff0000; color: #fff; }
 }
 
 @keyframes blink-maroon {
-    0%, 100% { background-color: #822727; color: #fff; }
-    50% { background-color: #fff; color: #000; }
+    0%, 100% { background-color: #ffe6e6; color: #000; }
+    50% { background-color: #800000; color: #fff; }
 }
 
 /* Кнопки */
@@ -253,11 +253,13 @@ h1 {
     padding: 30px;
     border-radius: 20px;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     text-align: center;
     position: relative;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease;
+    max-height: 80vh; /* Ограничение высоты модального окна */
+    overflow-y: auto;  /* Добавление вертикального скролла при необходимости */
 }
 
 .close {
@@ -319,6 +321,42 @@ h1 {
 
 textarea {
     resize: vertical;
+}
+
+/* Стили для многошаговой формы */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+/* Слайдер информации о заказе */
+.info-slider {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.slide {
+    display: none;
+}
+
+.slide.active {
+    display: block;
+}
+
+/* Навигационные кнопки для слайдера */
+.slider-navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Стилизация кнопок слайдера */
+.slider-navigation .btn {
+    width: 45%;
 }
 
 /* Анимации */
@@ -397,5 +435,9 @@ textarea {
     .filter-sort {
         justify-content: space-between;
         width: 100%;
+    }
+
+    .slider-navigation .btn {
+        width: 45%;
     }
 }
